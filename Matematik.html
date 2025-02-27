@@ -1,0 +1,698 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Matematik Eğitim Aracı</title>
+    <HTA:APPLICATION 
+        ID="MatematikEgitim"
+        APPLICATIONNAME="Matematik Eğitim Aracı"
+        BORDER="thick"
+        BORDERSTYLE="normal"
+        CAPTION="yes"
+        ICON="calc.exe"
+        MAXIMIZEBUTTON="yes"
+        MINIMIZEBUTTON="yes"
+        SHOWINTASKBAR="yes"
+        SINGLEINSTANCE="yes"
+        SYSMENU="yes"
+        WINDOWSTATE="normal"
+    />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #3498db;
+            color: white;
+        }
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            animation: fadeEffect 1s;
+        }
+        @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e8f4fc;
+            border-left: 5px solid #3498db;
+            border-radius: 4px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 15px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .quiz-container {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Matematik Öğrenme Aracı</h1>
+        
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'Calculator')" id="defaultOpen">Hesap Makinesi</button>
+            <button class="tablinks" onclick="openTab(event, 'Geometry')">Geometri</button>
+            <button class="tablinks" onclick="openTab(event, 'Equations')">Denklemler</button>
+            <button class="tablinks" onclick="openTab(event, 'Quiz')">Matematik Testi</button>
+            <button class="tablinks" onclick="openTab(event, 'MultiplicationTable')">Çarpım Tablosu</button>
+        </div>
+        
+        <!-- Hesap Makinesi Sekmesi -->
+        <div id="Calculator" class="tabcontent">
+            <h2>Temel Matematik İşlemleri</h2>
+            <p>Basit matematiksel işlemleri hesaplamak için sayıları ve operatörü seçin.</p>
+            
+            <div>
+                <input type="number" id="num1" placeholder="İlk sayı">
+                <select id="operator">
+                    <option value="+">Toplama (+)</option>
+                    <option value="-">Çıkarma (-)</option>
+                    <option value="*">Çarpma (×)</option>
+                    <option value="/">Bölme (÷)</option>
+                    <option value="%">Mod (%)</option>
+                    <option value="^">Üs (^)</option>
+                </select>
+                <input type="number" id="num2" placeholder="İkinci sayı">
+                <button onclick="calculate()">Hesapla</button>
+            </div>
+            
+            <div class="result" id="calculatorResult">Sonuç burada görünecek...</div>
+            
+            <div>
+                <h3>Matematik Formülleri:</h3>
+                <ul>
+                    <li>Toplama: a + b</li>
+                    <li>Çıkarma: a - b</li>
+                    <li>Çarpma: a × b</li>
+                    <li>Bölme: a ÷ b</li>
+                    <li>Mod: a % b (a'nın b'ye bölümünden kalan)</li>
+                    <li>Üs: a ^ b (a üssü b)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Geometri Sekmesi -->
+        <div id="Geometry" class="tabcontent">
+            <h2>Geometri Hesaplamaları</h2>
+            <p>Geometrik şekillerin alanlarını ve çevrelerini hesaplayın.</p>
+            
+            <div>
+                <select id="shapeType" onchange="showShapeInputs()">
+                    <option value="">Şekil seçin</option>
+                    <option value="square">Kare</option>
+                    <option value="rectangle">Dikdörtgen</option>
+                    <option value="circle">Daire</option>
+                    <option value="triangle">Üçgen</option>
+                </select>
+            </div>
+            
+            <div id="shapeInputs" style="margin-top: 15px;">
+                <!-- Giriş alanları dinamik olarak eklenecek -->
+            </div>
+            
+            <div class="result" id="geometryResult">Sonuç burada görünecek...</div>
+            
+            <div>
+                <h3>Geometri Formülleri:</h3>
+                <ul>
+                    <li>Kare: Alan = a² | Çevre = 4a</li>
+                    <li>Dikdörtgen: Alan = a × b | Çevre = 2(a + b)</li>
+                    <li>Daire: Alan = πr² | Çevre = 2πr</li>
+                    <li>Üçgen: Alan = (t × h)/2 | Çevre = a + b + c</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Denklem Çözücü Sekmesi -->
+        <div id="Equations" class="tabcontent">
+            <h2>Denklem Çözücü</h2>
+            <p>Basit denklemleri çözün (ax + b = c formatında)</p>
+            
+            <div>
+                <input type="number" id="coefA" placeholder="a katsayısı">
+                <span>x +</span>
+                <input type="number" id="coefB" placeholder="b katsayısı">
+                <span>=</span>
+                <input type="number" id="coefC" placeholder="c değeri">
+                <button onclick="solveEquation()">Denklemi Çöz</button>
+            </div>
+            
+            <div class="result" id="equationResult">Sonuç burada görünecek...</div>
+            
+            <div>
+                <h3>Denklem Çözümü:</h3>
+                <p>Birinci dereceden bir bilinmeyenli denklemler için (ax + b = c):</p>
+                <ol>
+                    <li>ax + b = c</li>
+                    <li>ax = c - b</li>
+                    <li>x = (c - b) / a</li>
+                </ol>
+            </div>
+        </div>
+        
+        <!-- Matematik Test Sekmesi -->
+        <div id="Quiz" class="tabcontent">
+            <h2>Matematik Testi</h2>
+            <p>Matematik bilgilerinizi test edin!</p>
+            
+            <div class="quiz-container" id="quizContainer">
+                <div id="quizQuestion">Soruyu görmek için başlat düğmesine tıklayın.</div>
+                <input type="number" id="quizAnswer" placeholder="Cevabınızı girin">
+                <button id="quizBtn" onclick="startQuiz()">Testi Başlat</button>
+            </div>
+            
+            <div class="result" id="quizResult"></div>
+            
+            <div>
+                <h3>Skor:</h3>
+                <p>Doğru: <span id="correctCount">0</span></p>
+                <p>Yanlış: <span id="incorrectCount">0</span></p>
+            </div>
+        </div>
+        
+        <!-- Çarpım Tablosu Sekmesi -->
+        <div id="MultiplicationTable" class="tabcontent">
+            <h2>Çarpım Tablosu</h2>
+            <p>1'den 10'a kadar çarpım tablosu.</p>
+            
+            <table id="multTable">
+                <tr>
+                    <th>×</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th>4</th>
+                    <th>5</th>
+                    <th>6</th>
+                    <th>7</th>
+                    <th>8</th>
+                    <th>9</th>
+                    <th>10</th>
+                </tr>
+                <!-- Tablo satırları dinamik olarak oluşturulacak -->
+            </table>
+            
+            <div style="margin-top: 20px;">
+                <h3>Özel Çarpım Tablosu Oluştur:</h3>
+                <input type="number" id="customNumber" min="1" max="20" value="1">
+                <button onclick="generateCustomTable()">Oluştur</button>
+                <div id="customTableContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sayfa yüklendiğinde uygulamayı başlat
+        window.onload = function() {
+            // Varsayılan sekmeyi aç
+            document.getElementById("defaultOpen").click();
+            
+            // Çarpım tablosunu oluştur
+            generateMultiplicationTable();
+        }
+        
+        // Sekme işlevselliği
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            
+            // Tüm sekme içeriklerini gizle
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            
+            // Tüm sekme düğmelerinden "active" sınıfını kaldır
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            
+            // Mevcut sekmeyi göster ve düğmeye "active" sınıfını ekle
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        
+        // Temel hesap makinesi fonksiyonu
+        function calculate() {
+            var num1 = parseFloat(document.getElementById("num1").value);
+            var num2 = parseFloat(document.getElementById("num2").value);
+            var operator = document.getElementById("operator").value;
+            var result;
+            
+            if (isNaN(num1) || isNaN(num2)) {
+                document.getElementById("calculatorResult").innerHTML = "Lütfen geçerli sayılar girin.";
+                return;
+            }
+            
+            switch(operator) {
+                case "+":
+                    result = num1 + num2;
+                    break;
+                case "-":
+                    result = num1 - num2;
+                    break;
+                case "*":
+                    result = num1 * num2;
+                    break;
+                case "/":
+                    if (num2 === 0) {
+                        document.getElementById("calculatorResult").innerHTML = "Sıfıra bölme hatası!";
+                        return;
+                    }
+                    result = num1 / num2;
+                    break;
+                case "%":
+                    result = num1 % num2;
+                    break;
+                case "^":
+                    result = Math.pow(num1, num2);
+                    break;
+                default:
+                    result = "Geçersiz operatör";
+            }
+            
+            document.getElementById("calculatorResult").innerHTML = 
+                num1 + " " + operator.replace("*", "×").replace("/", "÷") + " " + num2 + " = " + result;
+        }
+        
+        // Geometri hesaplamaları
+        function showShapeInputs() {
+            var shapeType = document.getElementById("shapeType").value;
+            var inputsDiv = document.getElementById("shapeInputs");
+            inputsDiv.innerHTML = "";
+            
+            if (shapeType === "square") {
+                inputsDiv.innerHTML = `
+                    <input type="number" id="sideLength" placeholder="Kenar uzunluğu">
+                    <button onclick="calculateGeometry('square')">Hesapla</button>
+                `;
+            } else if (shapeType === "rectangle") {
+                inputsDiv.innerHTML = `
+                    <input type="number" id="length" placeholder="Uzunluk">
+                    <input type="number" id="width" placeholder="Genişlik">
+                    <button onclick="calculateGeometry('rectangle')">Hesapla</button>
+                `;
+            } else if (shapeType === "circle") {
+                inputsDiv.innerHTML = `
+                    <input type="number" id="radius" placeholder="Yarıçap">
+                    <button onclick="calculateGeometry('circle')">Hesapla</button>
+                `;
+            } else if (shapeType === "triangle") {
+                inputsDiv.innerHTML = `
+                    <input type="number" id="sideA" placeholder="a kenarı">
+                    <input type="number" id="sideB" placeholder="b kenarı">
+                    <input type="number" id="sideC" placeholder="c kenarı">
+                    <input type="number" id="height" placeholder="Yükseklik (alan için)">
+                    <button onclick="calculateGeometry('triangle')">Hesapla</button>
+                `;
+            }
+        }
+        
+        function calculateGeometry(shapeType) {
+            var area, perimeter;
+            var resultText = "";
+            
+            if (shapeType === "square") {
+                var side = parseFloat(document.getElementById("sideLength").value);
+                
+                if (isNaN(side) || side <= 0) {
+                    document.getElementById("geometryResult").innerHTML = "Lütfen geçerli bir kenar uzunluğu girin.";
+                    return;
+                }
+                
+                area = side * side;
+                perimeter = 4 * side;
+                
+                resultText = `
+                    <strong>Kare:</strong>
+
+                    Kenar = ${side}
+
+                    Alan = ${side} × ${side} = ${area.toFixed(2)}
+
+                    Çevre = 4 × ${side} = ${perimeter.toFixed(2)}
+                `;
+            } else if (shapeType === "rectangle") {
+                var length = parseFloat(document.getElementById("length").value);
+                var width = parseFloat(document.getElementById("width").value);
+                
+                if (isNaN(length) || isNaN(width) || length <= 0 || width <= 0) {
+                    document.getElementById("geometryResult").innerHTML = "Lütfen geçerli uzunluk ve genişlik değerleri girin.";
+                    return;
+                }
+                
+                area = length * width;
+                perimeter = 2 * (length + width);
+                
+                resultText = `
+                    <strong>Dikdörtgen:</strong>
+
+                    Uzunluk = ${length}, Genişlik = ${width}
+
+                    Alan = ${length} × ${width} = ${area.toFixed(2)}
+
+                    Çevre = 2 × (${length} + ${width}) = ${perimeter.toFixed(2)}
+                `;
+            } else if (shapeType === "circle") {
+                var radius = parseFloat(document.getElementById("radius").value);
+                
+                if (isNaN(radius) || radius <= 0) {
+                    document.getElementById("geometryResult").innerHTML = "Lütfen geçerli bir yarıçap değeri girin.";
+                    return;
+                }
+                
+                area = Math.PI * radius * radius;
+                perimeter = 2 * Math.PI * radius; // Çevre
+                
+                resultText = `
+                    <strong>Daire:</strong>
+
+                    Yarıçap = ${radius}
+
+                    Alan = π × ${radius}² = ${area.toFixed(2)}
+
+                    Çevre = 2π × ${radius} = ${perimeter.toFixed(2)}
+                `;
+            } else if (shapeType === "triangle") {
+                var a = parseFloat(document.getElementById("sideA").value);
+                var b = parseFloat(document.getElementById("sideB").value);
+                var c = parseFloat(document.getElementById("sideC").value);
+                var h = parseFloat(document.getElementById("height").value);
+                
+                if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(h) || a <= 0 || b <= 0 || c <= 0 || h <= 0) {
+                    document.getElementById("geometryResult").innerHTML = "Lütfen tüm değerleri geçerli bir şekilde girin.";
+                    return;
+                }
+                
+                // Üçgen eşitsizliği kontrolü
+                if (a + b <= c || a + c <= b || b + c <= a) {
+                    document.getElementById("geometryResult").innerHTML = "Bu kenarlar bir üçgen oluşturamaz. Üçgen eşitsizliği: herhangi iki kenarın toplamı üçüncü kenardan büyük olmalıdır.";
+                    return;
+                }
+                
+                area = (b * h) / 2; // Taban ve yüksekliği kullanarak
+                perimeter = a + b + c;
+                
+                resultText = `
+                    <strong>Üçgen:</strong>
+
+                    Kenarlar: a = ${a}, b = ${b}, c = ${c}
+
+                    Yükseklik = ${h}
+
+                    Alan = (${b} × ${h}) / 2 = ${area.toFixed(2)}
+
+                    Çevre = ${a} + ${b} + ${c} = ${perimeter.toFixed(2)}
+                `;
+            }
+            
+            document.getElementById("geometryResult").innerHTML = resultText;
+        }
+        
+        // Denklem çözme fonksiyonu
+        function solveEquation() {
+            var a = parseFloat(document.getElementById("coefA").value);
+            var b = parseFloat(document.getElementById("coefB").value);
+            var c = parseFloat(document.getElementById("coefC").value);
+            
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                document.getElementById("equationResult").innerHTML = "Lütfen tüm katsayıları girin.";
+                return;
+            }
+            
+            if (a === 0) {
+                document.getElementById("equationResult").innerHTML = "a değeri 0 olamaz (ax + b = c denklemi için).";
+                return;
+            }
+            
+            // x için çöz: ax + b = c => x = (c - b) / a
+            var x = (c - b) / a;
+            
+            var resultHTML = `
+                <strong>Denklem: ${a}x + ${b} = ${c}</strong>
+
+                <strong>Çözüm adımları:</strong>
+
+                1. ${a}x + ${b} = ${c}
+
+                2. ${a}x = ${c} - ${b} = ${c-b}
+
+                3. x = ${c-b} / ${a} = ${x.toFixed(3)}
+            `;
+            
+            document.getElementById("equationResult").innerHTML = resultHTML;
+        }
+        
+        // Test işlevselliği
+        var quizActive = false;
+        var currentQuestion = {};
+        var correctCount = 0;
+        var incorrectCount = 0;
+        
+        function startQuiz() {
+            if (!quizActive) {
+                quizActive = true;
+                document.getElementById("quizBtn").innerHTML = "Cevapla";
+                generateQuestion();
+            } else {
+                checkAnswer();
+            }
+        }
+        
+        function generateQuestion() {
+            // Cevap alanını sıfırla
+            document.getElementById("quizAnswer").value = "";
+            
+            // Rastgele işlenenler ve işlem oluştur
+            var operationTypes = ['+', '-', '*', '/'];
+            var operation = operationTypes[Math.floor(Math.random() * 3)]; // Bölmeyi basitlik için hariç tut
+            var num1, num2;
+            
+            // İşleme göre uygun sayılar oluştur
+            switch(operation) {
+                case '+':
+                    num1 = Math.floor(Math.random() * 100);
+                    num2 = Math.floor(Math.random() * 100);
+                    break;
+                case '-':
+                    num1 = Math.floor(Math.random() * 100) + 50; // num1 > num2 olduğundan emin ol
+                    num2 = Math.floor(Math.random() * 50);
+                    break;
+                case '*':
+                    num1 = Math.floor(Math.random() * 12) + 1;
+                    num2 = Math.floor(Math.random() * 12) + 1;
+                    break;
+                case '/':
+                    num2 = Math.floor(Math.random() * 10) + 1;
+                    num1 = num2 * (Math.floor(Math.random() * 10) + 1); // Tam bölünme sağla
+                    break;
+            }
+            
+            // Cevabı hesapla
+            var answer;
+            switch(operation) {
+                case '+': answer = num1 + num2; break;
+                case '-': answer = num1 - num2; break;
+                case '*': answer = num1 * num2; break;
+                case '/': answer = num1 / num2; break;
+            }
+            
+            // Okunabilirlik için işlem sembolünü göster
+            var displayOperation = operation;
+            if (operation === '*') displayOperation = '×';
+            if (operation === '/') displayOperation = '÷';
+            
+            // Mevcut soru verilerini kaydet
+            currentQuestion = {
+                num1: num1,
+                num2: num2,
+                operation: operation,
+                displayOperation: displayOperation,
+                answer: answer
+            };
+            
+            // Soruyu göster
+            document.getElementById("quizQuestion").innerHTML = `
+                ${num1} ${displayOperation} ${num2} = ?
+            `;
+            
+            // Cevap girişini odakla
+            document.getElementById("quizAnswer").focus();
+        }
+        
+        function checkAnswer() {
+            var userAnswer = parseFloat(document.getElementById("quizAnswer").value);
+            
+            if (isNaN(userAnswer)) {
+                document.getElementById("quizResult").innerHTML = "Lütfen bir sayı girin.";
+                return;
+            }
+            
+            var isCorrect = Math.abs(userAnswer - currentQuestion.answer) < 0.001; // Ondalık hassasiyeti için
+            
+            if (isCorrect) {
+                document.getElementById("quizResult").innerHTML = `
+                    <span class="correct">Doğru!</span> ${currentQuestion.num1} ${currentQuestion.displayOperation} ${currentQuestion.num2} = ${currentQuestion.answer}
+                `;
+                correctCount++;
+                document.getElementById("correctCount").innerText = correctCount;
+            } else {
+                document.getElementById("quizResult").innerHTML = `
+                    <span class="incorrect">Yanlış.</span> Doğru cevap: ${currentQuestion.num1} ${currentQuestion.displayOperation} ${currentQuestion.num2} = ${currentQuestion.answer}
+                `;
+                incorrectCount++;
+                document.getElementById("incorrectCount").innerText = incorrectCount;
+            }
+            
+            // Yeni soru oluştur
+            setTimeout(generateQuestion, 1500);
+        }
+        
+        // Çarpım tablosu işlevselliği
+        function generateMultiplicationTable() {
+            var table = document.getElementById("multTable");
+            
+            // Başlık hariç mevcut satırları temizle
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+            
+            // Tablo satırlarını oluştur
+            for (var i = 1; i <= 10; i++) {
+                var row = table.insertRow();
+                var headerCell = row.insertCell();
+                headerCell.innerHTML = i;
+                headerCell.style.fontWeight = "bold";
+                headerCell.style.backgroundColor = "#3498db";
+                headerCell.style.color = "white";
+                
+                for (var j = 1; j <= 10; j++) {
+                    var cell = row.insertCell();
+                    cell.innerHTML = i * j;
+                    
+                    // Mevcut satır numarasının katlarını vurgula
+                    if ((i * j) % i === 0) {
+                        cell.style.backgroundColor = "#e8f4fc";
+                    }
+                }
+            }
+        }
+        
+        function generateCustomTable() {
+            var num = parseInt(document.getElementById("customNumber").value);
+            
+            if (isNaN(num) || num < 1 || num > 20) {
+                document.getElementById("customTableContainer").innerHTML = "Lütfen 1 ile 20 arasında bir sayı girin.";
+                return;
+            }
+            
+            var tableHTML = `<h3>${num} Sayısının Çarpım Tablosu</h3>
+            <table>
+                <tr>
+                    <th>${num} ×</th>
+                    <th>Sonuç</th>
+                </tr>`;
+                
+            for (var i = 1; i <= 10; i++) {
+                tableHTML += `
+                <tr>
+                    <td>${num} × ${i}</td>
+                    <td>${num * i}</td>
+                </tr>
+                `;
+            }
+            
+            tableHTML += `</table>`;
+            
+            document.getElementById("customTableContainer").innerHTML = tableHTML;
+        }
+    </script>
+</body>
+</html>
